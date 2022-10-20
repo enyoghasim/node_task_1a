@@ -905,7 +905,6 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
             );
             responseOnGoing = true;
             hasNoResponse = false;
-            console.log("hello");
             setTimeout(async () => {
               closeResponse();
             }, closeResponseTimeoutCounter);
@@ -1030,7 +1029,6 @@ function showResponse(responseHead, responseBody, weatherQuestion) {
 
 // function to close response page
 function closeResponse() {
-  console.log("close response");
   responseOnGoing = false;
   hasNoResponse = true;
   $("#page5").css("display", "none");
@@ -1403,6 +1401,11 @@ async function askQuestion(totalQuizQuestions, counter, fromBack) {
       }
     });
 
+    $("#typeSelection .answerInner").append(`
+    <div class="selectionOptions">
+      <button  class="selectionBtns selectionBtn">None of the above</button>
+    </div>
+  `);
     if (alreadyAnswered && alreadyAnswered.answer) {
       if (Array.isArray(alreadyAnswered.answer)) {
         alreadyAnswered.answer.forEach((answer) => {
@@ -1950,6 +1953,11 @@ $(document).on("click", ".selectionBtn", function (evt, isCustom) {
     tempSelectionAns.push(val);
     if (!$(this).hasClass("active")) $(this).addClass("active");
     if (!$(this).hasClass("highlight")) $(this).addClass("highlight");
+    if (val) {
+      checkAllergie();
+    } else {
+      handleNoneOfTheAbove();
+    }
   }
   if (!isCustom) {
     timeout = setTimeout(function () {
@@ -2069,6 +2077,10 @@ async function addToCart() {
 function handleNoneOfTheAbove() {
   isSkipStoreAnswer = true;
   nextQuestion();
+}
+
+function checkAllergie() {
+  console.log("checking allegie");
 }
 
 function handleImageMissing(self) {
