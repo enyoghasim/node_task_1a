@@ -64,6 +64,7 @@ let nextQuestionTimeoutCounter = 3000;
 let selectionQuestionTimeoutCounter = 6000;
 let closeResponseTimeoutCounter = 5000;
 let timeout;
+let terminateData;
 
 const mainImage = $(".main-image-container img");
 fetch(url_preset + "/configurations")
@@ -72,6 +73,14 @@ fetch(url_preset + "/configurations")
     if (data.success) {
       mainConfigurations = data.payload;
       mainImage.attr("src", url_preset + mainConfigurations.image.url);
+    }
+  });
+
+fetch(url_preset + "/terminate-data")
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      terminateData = data.payload;
     }
   });
 
@@ -1954,7 +1963,7 @@ $(document).on("click", ".selectionBtn", function (evt, isCustom) {
     if (!$(this).hasClass("active")) $(this).addClass("active");
     if (!$(this).hasClass("highlight")) $(this).addClass("highlight");
     if (val) {
-      checkAllergie();
+      checkAllergie(val);
     } else {
       handleNoneOfTheAbove();
     }
@@ -2079,8 +2088,29 @@ function handleNoneOfTheAbove() {
   nextQuestion();
 }
 
-function checkAllergie() {
-  console.log("checking allegie");
+function checkAllergie(e) {
+  // console.log("checking allegie");
+  const mainIngredients = ["Banana", "Olive", "Sunflowers"];
+
+  if (mainIngredients.includes(e)) {
+    terminateQuiz();
+  }
+}
+
+function terminateQuiz() {
+  $("body").append(`<div class="absolute-overlay">
+  <div class="overlay-inner">
+    <p>${terminateData.message}</p>
+    <h3>Quiz will now be terminated</h3>
+    <div class="countdown">${terminateData.countdown}</div>
+  </div>
+  </div>`);
+  setInterval(() => {
+    if (terminateData.countdown === 0) return window.location.replace("/");
+    const minus = Number(terminateData.countdown) - 1;
+    terminateData.countdown = minus;
+    $(".countdown").html(minus);
+  }, 1000);
 }
 
 function handleImageMissing(self) {

@@ -1654,3 +1654,20 @@ img.image-missing {
   display: none;
   border-left: none;
 }
+
+.absolute-overlay {
+  z-index: 999999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  right: 0;
+  bottom: 0;
+  background: #0A0A0A;
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}

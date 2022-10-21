@@ -9,23 +9,22 @@
  */
 
 const moment = require("moment");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
-const { intersection } = require('lodash');
-const coreModel = require('./../core/models');
+const { intersection } = require("lodash");
+const coreModel = require("./../core/models");
 
 module.exports = (sequelize, DataTypes) => {
   const Role = sequelize.define(
     "role",
     {
-
-            id: {
-              type: DataTypes.INTEGER,
-              primaryKey: true,
-              autoIncrement: true,
-            },
-          			name: DataTypes.STRING,
-created_at: DataTypes.DATEONLY,
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: DataTypes.STRING,
+      created_at: DataTypes.DATEONLY,
       updated_at: DataTypes.DATE,
     },
     {
@@ -42,15 +41,12 @@ created_at: DataTypes.DATEONLY,
   coreModel.call(this, Role);
 
   Role._preCreateProcessing = function (data) {
-
     return data;
   };
   Role._postCreateProcessing = function (data) {
-
     return data;
   };
   Role._customCountingConditions = function (data) {
-
     return data;
   };
 
@@ -79,74 +75,68 @@ created_at: DataTypes.DATEONLY,
     return results;
   };
 
-  Role.associate = function(models) { 	
-Role.hasMany(models.user, {
-                foreignKey: "user_id",
-                as: "users",
-                constraints: false,
-              }) };
-  
-
+  Role.associate = function (models) {
+    Role.hasMany(models.user, {
+      foreignKey: "user_id",
+      as: "users",
+      constraints: false,
+    });
+  };
 
   Role.allowFields = function () {
-    return ["user_id",'id','name',];
+    return ["user_id", "id", "name"];
   };
 
   Role.labels = function () {
-    return ['ID','Role Name',];
+    return ["ID", "Role Name"];
   };
 
   Role.validationRules = function () {
     return [
-    	['id', 'ID', ''],
-			['name', 'Role Name', 'required'],
-		];
+      ["id", "ID", ""],
+      ["name", "Role Name", "required"],
+    ];
   };
 
   Role.validationEditRules = function () {
     return [
-    	['id', 'ID', ''],
-			['name', 'Role Name', 'required'],
-		];
+      ["id", "ID", ""],
+      ["name", "Role Name", "required"],
+    ];
   };
 
+  Role.get_user_paginated = function (db, where = {}, ...rest) {
+    return Role.getPaginated(...rest, [
+      {
+        model: db.user,
+        where: where,
+        required: Object.keys(where).length > 0 ? true : false,
+        as: "users",
+      },
+    ]);
+  };
 
- 	
-Role.get_user_paginated = function(db, where = {}, ...rest) {
-        return Role.getPaginated(...rest, [{
-          model: db.user,          
-          where: where,
-          required: Object.keys(where).length > 0 ? true : false,       
-          as: "users",   
-        }])
-      }	
+  Role.get_role_user = (id, db) => {
+    return Role.findByPk(id, {
+      include: [
+        {
+          model: db.user,
+          required: false,
+          as: "users",
+        },
+      ],
+    });
+  };
 
-
- Role.get_role_user = (id, db) => {
-      return Role.findByPk(id, 
-        { 
-          include: [
-            { 
-              model: db.user,
-              required: false,  
-              as: "users",   
-            }
-          ] 
-        });
-    };
- 
   // ex
   Role.intersection = function (fields) {
     if (fields) {
       return intersection(
-        [
-          'id','name','created_at','updated_at',
-        ],
-        Object.keys(fields),
+        ["id", "name", "created_at", "updated_at"],
+        Object.keys(fields)
       );
     } else return [];
   };
-
 
   return Role;
 };

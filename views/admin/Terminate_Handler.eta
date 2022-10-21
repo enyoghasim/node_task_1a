@@ -1,0 +1,29 @@
+
+<% if(it.layout_clean_mode) {%>
+<% layout("../layouts/admin/Clean") %>
+<% } else {%>
+<% layout("../layouts/admin/Main") %>
+<%}%>
+
+
+<%~ includeFile("../partials/admin/Breadcrumb", it)%>
+<style>
+.countdown-form {
+ max-width : 500px;
+ margin : 0px auto;
+ margin-top : 5rem;
+}
+</style>
+
+<form class="countdown-form" method="post" action="/admin/edit-terminate-payload">
+  <div class="form-group">
+    <label for="countdown">Countdown time in seconds </label>
+    <input name="countdown" type="number" class="form-control" id="countdown" aria-describedby="numberHelp" value="<%= it.countdown %>" placeholder="enter number (minimum 10s)">
+  </div>
+  <div class="form-group">
+    <label for="message">Message</label>
+    <input name="message" type="text" class="form-control" id="message" value="<%= it.message %>" placeholder="Message">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
